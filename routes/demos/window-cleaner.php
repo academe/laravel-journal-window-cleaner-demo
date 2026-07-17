@@ -4,8 +4,10 @@ use App\Demos\WindowCleaner\Http\Controllers\Admin\BooksController;
 use App\Demos\WindowCleaner\Http\Controllers\Admin\CloseMonthController;
 use App\Demos\WindowCleaner\Http\Controllers\Admin\CustomerController;
 use App\Demos\WindowCleaner\Http\Controllers\Admin\DashboardController;
+use App\Demos\WindowCleaner\Http\Controllers\Admin\PurchaseController;
 use App\Demos\WindowCleaner\Http\Controllers\Admin\RunVisitsController;
 use App\Demos\WindowCleaner\Http\Controllers\Admin\SmsController;
+use App\Demos\WindowCleaner\Http\Controllers\Admin\VatReturnController;
 use App\Demos\WindowCleaner\Http\Controllers\Portal\AccountController;
 use App\Demos\WindowCleaner\Http\Controllers\Portal\PaymentController;
 use App\Demos\WindowCleaner\Http\Controllers\Portal\SwitchController;
@@ -24,6 +26,9 @@ Route::prefix('window-cleaner')->name('wc.')->group(function () {
         Route::post('customers/{customer}/payments', [CustomerController::class, 'storePayment'])->name('payments.store');
 
         Route::post('run-visits', [RunVisitsController::class, 'store'])->name('run-visits');
+        Route::get('purchases', [PurchaseController::class, 'index'])->name('purchases.index');
+        Route::post('purchases', [PurchaseController::class, 'store'])->name('purchases.store');
+        Route::get('vat-return', [VatReturnController::class, 'show'])->name('vat-return');
         Route::get('books', [BooksController::class, 'show'])->name('books');
         Route::get('close-month', [CloseMonthController::class, 'show'])->name('close-month.show');
         Route::post('close-month', [CloseMonthController::class, 'store'])->name('close-month.store');

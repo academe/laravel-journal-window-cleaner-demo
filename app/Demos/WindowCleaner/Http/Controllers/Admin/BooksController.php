@@ -14,6 +14,7 @@ class BooksController
         $bank = Books::bankLedger()->currentBalance('GBP');
         $sales = Books::salesLedger()->currentBalance('GBP');
         $vat = Books::vatLedger()->currentBalance('GBP');
+        $expenses = Books::expensesLedger()->currentBalance('GBP');
 
         // Recent groups, newest first: find the 10 most recent distinct
         // group UUIDs (by their latest entry's post_date/created_at),
@@ -45,8 +46,9 @@ class BooksController
             'bank' => $bank,
             'sales' => $sales,
             'vat' => $vat,
+            'expenses' => $expenses,
             'assets' => $debtors->add($bank),
-            'liabilitiesPlusIncome' => $vat->add($sales),
+            'liabilitiesPlusIncomeLessExpenses' => $vat->add($sales)->subtract($expenses),
             'recentGroups' => $recentGroups,
         ]);
     }

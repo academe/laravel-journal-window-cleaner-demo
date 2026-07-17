@@ -9,10 +9,10 @@ use App\Demos\WindowCleaner\Models\CompanyAccount;
 /**
  * Named lookups into the business's books (Level C).
  *
- * Four typed ledgers cover the accounting equation for this business:
- * Debtors + Bank (assets) = VAT owed (liability) + Sales (income).
- * Every customer journal lives in Debtors; the three company account
- * journals live in their own ledgers.
+ * Five typed ledgers cover the accounting equation for this business:
+ * Debtors + Bank (assets) = VAT owed (liability) + Sales (income)
+ * − Expenses. Every customer journal lives in Debtors; the four company
+ * account journals live in their own ledgers.
  */
 final class Books
 {
@@ -22,6 +22,8 @@ final class Books
 
     public const BANK = 'Bank';
 
+    public const EXPENSES = 'Expenses';
+
     public const LEDGER_DEBTORS = 'Debtors';
 
     public const LEDGER_BANK = 'Bank';
@@ -29,6 +31,8 @@ final class Books
     public const LEDGER_SALES = 'Sales';
 
     public const LEDGER_VAT = 'VAT owed';
+
+    public const LEDGER_EXPENSES = 'Expenses';
 
     public static function salesJournal(): Journal
     {
@@ -43,6 +47,11 @@ final class Books
     public static function bankJournal(): Journal
     {
         return self::accountJournal(self::BANK);
+    }
+
+    public static function expensesJournal(): Journal
+    {
+        return self::accountJournal(self::EXPENSES);
     }
 
     public static function debtorsLedger(): Ledger
@@ -63,6 +72,11 @@ final class Books
     public static function vatLedger(): Ledger
     {
         return self::ledger(self::LEDGER_VAT);
+    }
+
+    public static function expensesLedger(): Ledger
+    {
+        return self::ledger(self::LEDGER_EXPENSES);
     }
 
     private static function accountJournal(string $name): Journal

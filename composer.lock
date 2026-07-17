@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6c77813effd5840880d00a6e61072bb3",
+    "content-hash": "14ab9a9594fdbf877a30819b12bb62b1",
     "packages": [
         {
             "name": "academe/laravel-journal",
-            "version": "dev-main",
+            "version": "1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/academe/laravel-ledger.git",
-                "reference": "975524df4c5f5078278430562eb05dd3ab0bb80b"
+                "reference": "97ed146efa767927a8bdba9831d2a23239df464f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/academe/laravel-ledger/zipball/975524df4c5f5078278430562eb05dd3ab0bb80b",
-                "reference": "975524df4c5f5078278430562eb05dd3ab0bb80b",
+                "url": "https://api.github.com/repos/academe/laravel-ledger/zipball/97ed146efa767927a8bdba9831d2a23239df464f",
+                "reference": "97ed146efa767927a8bdba9831d2a23239df464f",
                 "shasum": ""
             },
             "require": {
@@ -32,7 +32,6 @@
                 "orchestra/testbench": "^10.0",
                 "pestphp/pest": "^3.0"
             },
-            "default-branch": true,
             "type": "library",
             "extra": {
                 "laravel": {
@@ -46,25 +45,7 @@
                     "Academe\\LaravelJournal\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "Academe\\LaravelJournal\\Tests\\": "tests/"
-                }
-            },
-            "scripts": {
-                "test": [
-                    "pest"
-                ],
-                "lint": [
-                    "pint --test"
-                ],
-                "fix": [
-                    "pint"
-                ],
-                "analyse": [
-                    "phpstan analyse"
-                ]
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -76,7 +57,7 @@
             ],
             "description": "Accounting journals and double-entry bookkeeping for Eloquent models",
             "keywords": [
-                "accounting",
+                "Accounting",
                 "bookkeeping",
                 "double-entry",
                 "journal",
@@ -84,10 +65,10 @@
                 "ledger"
             ],
             "support": {
-                "source": "https://github.com/academe/laravel-ledger/tree/main",
-                "issues": "https://github.com/academe/laravel-ledger/issues"
+                "issues": "https://github.com/academe/laravel-ledger/issues",
+                "source": "https://github.com/academe/laravel-ledger/tree/1.1.0"
             },
-            "time": "2026-07-14T22:58:34+00:00"
+            "time": "2026-07-17T16:49:52+00:00"
         },
         {
             "name": "brick/math",
@@ -9953,9 +9934,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "academe/laravel-journal": 20
-    },
+    "stability-flags": {},
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {

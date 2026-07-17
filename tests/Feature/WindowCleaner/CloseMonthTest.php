@@ -20,8 +20,8 @@ it('checkpoints every journal through last month end', function () {
 
     $result = app(CloseMonth::class)->run();
 
-    // 4 journals exist: the customer's plus Sales, VAT, Bank.
-    expect($result['closed'])->toBe(4)
+    // 5 journals exist: the customer's plus Sales, VAT, Bank, Expenses.
+    expect($result['closed'])->toBe(5)
         ->and($result['skipped'])->toBe(0)
         ->and($result['date']->toDateString())->toBe('2026-06-30')
         ->and($this->customer->journal->fresh()->latestCheckpoint()->checkpoint_date->toDateString())->toBe('2026-06-30');
@@ -35,7 +35,7 @@ it('is safe to run twice', function () {
     $second = app(CloseMonth::class)->run();
 
     expect($second['closed'])->toBe(0)
-        ->and($second['skipped'])->toBe(4);
+        ->and($second['skipped'])->toBe(5);
 });
 
 it('blocks back-dated postings into the closed period', function () {

@@ -37,7 +37,7 @@ it('closes the month and reports it', function () {
     $this->post('/window-cleaner/admin/close-month')
         ->assertRedirect('/window-cleaner/admin/close-month');
 
-    expect(JournalCheckpoint::count())->toBe(4);
+    expect(JournalCheckpoint::count())->toBe(5);
 
     $this->get('/window-cleaner/admin/close-month')
         ->assertOk()

@@ -3,6 +3,7 @@
 namespace App\Demos\WindowCleaner\Models;
 
 use Academe\LaravelJournal\Concerns\HasJournal;
+use Academe\LaravelJournal\Contracts\NamesJournal;
 use App\Demos\WindowCleaner\Support\Gbp;
 use Database\Factories\CustomerFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -16,7 +17,7 @@ use Money\Money;
  * Payments are credits (positive), charges are debits (negative),
  * so a negative balance means the customer owes money.
  */
-class Customer extends Model
+class Customer extends Model implements NamesJournal
 {
     use HasFactory, HasJournal, Notifiable;
 
@@ -47,5 +48,20 @@ class Customer extends Model
         $balance = $this->balance();
 
         return $balance->isNegative() ? $balance->absolute() : Gbp::money(0);
+    }
+
+    /**
+     * NamesJournal: the package uses these wherever it names this
+     * customer's journal (e.g. PeriodClosed messages) — the account
+     * name IS the customer, no duplicate name column needed.
+     */
+    public function journalDisplayName(): string
+    {
+        return $this->name;
+    }
+
+    public function journalDescription(): ?string
+    {
+        return $this->address;
     }
 }

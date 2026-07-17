@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Demos\WindowCleaner\Actions\CloseMonth;
 use App\Demos\WindowCleaner\Actions\EnsureBooksExist;
 use App\Demos\WindowCleaner\Actions\RecordPayment;
+use App\Demos\WindowCleaner\Actions\RecordPurchase;
 use App\Demos\WindowCleaner\Actions\RunDueVisits;
 use App\Demos\WindowCleaner\Actions\SendBalanceTexts;
 use App\Demos\WindowCleaner\Models\Customer;
@@ -113,16 +114,36 @@ class WindowCleanerSeeder extends Seeder
     {
         $runDueVisits = app(RunDueVisits::class);
         $recordPayment = app(RecordPayment::class);
+        $recordPurchase = app(RecordPurchase::class);
 
         // Close the first month of history once it has fully passed, so
         // the demo starts with a real checkpoint in place (Tour page).
         $closeOn = $start->copy()->endOfMonth()->addDay()->startOfDay();
+
+        // Two one-off equipment buys: the 15th of history months 2 and 5.
+        $equipment = [
+            $start->copy()->addMonths(1)->startOfMonth()->addDays(14)->toDateString() => ['Ladders R Us', '180.00'],
+            $start->copy()->addMonths(4)->startOfMonth()->addDays(14)->toDateString() => ['PureClean Systems', '249.00'],
+        ];
 
         for ($day = $start->copy()->startOfDay(); $day->lte(today()); $day = $day->copy()->addDay()) {
             $runDueVisits->run($day);
 
             foreach ($customers as $customer) {
                 $this->maybePay($recordPayment, $customer, $day);
+            }
+
+            // The round has running costs too, so the VAT return gets an
+            // input side: supplies on the first Monday of each month
+            // (£23.94 — awkward pennies exercise the VAT split), plus the
+            // one-off equipment buys above.
+            if ($day->isMonday() && $day->day <= 7) {
+                $recordPurchase->run('Squeaky Wholesale', 'supplies', Gbp::parse('23.94'), $day);
+            }
+
+            if (isset($equipment[$day->toDateString()])) {
+                [$supplier, $price] = $equipment[$day->toDateString()];
+                $recordPurchase->run($supplier, 'equipment', Gbp::parse($price), $day);
             }
 
             if ($day->isSameDay($closeOn)) {

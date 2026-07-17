@@ -17,7 +17,7 @@ use App\Demos\WindowCleaner\Support\Books;
  * ties a journal into the accounting equation via its ledger's type.
  *
  * Every journal must be owned by an Eloquent model, so the pure
- * accounting accounts (Sales, VAT, Bank) each get a stand-in
+ * accounting accounts (Sales, VAT, Bank, Expenses) each get a stand-in
  * CompanyAccount row to own their journal.
  *
  * initJournal('GBP') throws JournalAlreadyExists on a repeat call,
@@ -34,8 +34,9 @@ class EnsureBooksExist
         $bank = Ledger::firstOrCreate(['name' => Books::LEDGER_BANK], ['type' => StandardLedgerType::ASSET]);
         $sales = Ledger::firstOrCreate(['name' => Books::LEDGER_SALES], ['type' => StandardLedgerType::INCOME]);
         $vat = Ledger::firstOrCreate(['name' => Books::LEDGER_VAT], ['type' => StandardLedgerType::LIABILITY]);
+        $expenses = Ledger::firstOrCreate(['name' => Books::LEDGER_EXPENSES], ['type' => StandardLedgerType::EXPENSE]);
 
-        foreach ([[Books::SALES, $sales], [Books::VAT, $vat], [Books::BANK, $bank]] as [$name, $ledger]) {
+        foreach ([[Books::SALES, $sales], [Books::VAT, $vat], [Books::BANK, $bank], [Books::EXPENSES, $expenses]] as [$name, $ledger]) {
             $account = CompanyAccount::firstOrCreate(['name' => $name]);
 
             if ($account->journal()->doesntExist()) {

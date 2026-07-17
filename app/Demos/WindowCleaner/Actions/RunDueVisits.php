@@ -2,6 +2,7 @@
 
 namespace App\Demos\WindowCleaner\Actions;
 
+use Academe\LaravelJournal\Exceptions\PeriodClosed;
 use Academe\LaravelJournal\Exceptions\TransactionCouldNotBeProcessed;
 use App\Demos\WindowCleaner\Models\ServicePlan;
 use Carbon\CarbonInterface;
@@ -29,17 +30,19 @@ use Illuminate\Support\Facades\DB;
  * throws TransactionCouldNotBeProcessed — that's PeriodClosed doing its
  * job, not a bug. This demo surfaces that instead of crashing: the
  * plan is left untouched (next_due_on does NOT roll forward) and is
- * counted as skipped. It is not caught up automatically; a real system
- * would need the period reopened or the plan advanced manually, but
- * this is a demo, so the flashed message is left to show the package
- * behaviour rather than to fix it.
+ * reported as skipped. PeriodClosed carries the facts as structured
+ * properties (journal, lockedUntil, postDate), so the skip report can
+ * name the account and the dates without parsing exception text. It is
+ * not caught up automatically; a real system would need the period
+ * reopened or the plan advanced manually, but this is a demo, so the
+ * message shows the package behaviour rather than fixing it.
  */
 class RunDueVisits
 {
     public function __construct(protected ChargeVisit $chargeVisit) {}
 
     /**
-     * @return array{charged: int, skipped: int}
+     * @return array{charged: int, skipped: int, skippedPlans: list<string>}
      */
     public function run(?CarbonInterface $today = null): array
     {
@@ -53,7 +56,7 @@ class RunDueVisits
             ->get();
 
         $charged = 0;
-        $skipped = 0;
+        $skippedPlans = [];
 
         foreach ($due as $plan) {
             try {
@@ -70,11 +73,27 @@ class RunDueVisits
                 });
 
                 $charged++;
-            } catch (TransactionCouldNotBeProcessed) {
-                $skipped++;
+            } catch (TransactionCouldNotBeProcessed $e) {
+                // PeriodClosed's structured properties name the account
+                // (via Journal::displayName() and the NamesJournal
+                // contract) and both dates — no message parsing.
+                $cause = $e->getPrevious();
+
+                $skippedPlans[] = $cause instanceof PeriodClosed
+                    ? sprintf(
+                        '%s (due %s, closed through %s)',
+                        $cause->journal->displayName(),
+                        $cause->postDate->toFormattedDateString(),
+                        $cause->lockedUntil->toFormattedDateString(),
+                    )
+                    : $plan->customer->name;
             }
         }
 
-        return ['charged' => $charged, 'skipped' => $skipped];
+        return [
+            'charged' => $charged,
+            'skipped' => count($skippedPlans),
+            'skippedPlans' => $skippedPlans,
+        ];
     }
 }

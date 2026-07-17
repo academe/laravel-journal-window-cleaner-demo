@@ -16,7 +16,7 @@ it('charges exactly the due plans and rolls their dates beyond today', function 
 
     $result = app(RunDueVisits::class)->run($today);
 
-    expect($result)->toBe(['charged' => 2, 'skipped' => 0])
+    expect($result)->toBe(['charged' => 2, 'skipped' => 0, 'skippedPlans' => []])
         ->and(Visit::count())->toBe(2);
 
     // The overdue plan is charged at its scheduled date, not today.
@@ -55,7 +55,13 @@ it('skips a plan whose due date falls in a closed period instead of crashing', f
 
     $result = app(RunDueVisits::class)->run(Carbon::parse('2026-07-14'));
 
-    expect($result)->toBe(['charged' => 1, 'skipped' => 1])
+    expect($result['charged'])->toBe(1)
+        ->and($result['skipped'])->toBe(1)
+        // PeriodClosed's structured properties (journal->displayName()
+        // via NamesJournal, postDate, lockedUntil) power the detail line.
+        ->and($result['skippedPlans'][0])->toContain($stale->customer->name)
+        ->and($result['skippedPlans'][0])->toContain('due Jun 10, 2026')
+        ->and($result['skippedPlans'][0])->toContain('closed through Jun 30, 2026')
         ->and(Visit::count())->toBe(1);
 
     // The skipped plan is untouched: no visit, next_due_on unchanged.

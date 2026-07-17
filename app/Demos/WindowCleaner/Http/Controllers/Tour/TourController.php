@@ -75,11 +75,13 @@ class TourController
             'level-c' => [
                 'title' => 'Level C — typed ledgers and the accounting equation',
                 'intro' => 'Journals are grouped under typed ledgers: every customer journal sits '
-                    .'in Debtors (asset), and the company journals in Bank (asset), Sales (income) '
-                    .'and VAT owed (liability). Because every posting is a balanced group, '
-                    .'Debtors + Bank always equals VAT owed + Sales — the Books page computes each '
-                    .'side with one Ledger::currentBalance() call per ledger and shows the '
-                    .'equation holding live.',
+                    .'in Debtors (asset), and the company journals in Bank (asset), Sales (income), '
+                    .'VAT owed (liability) and Expenses (expense). Because every posting is a '
+                    .'balanced group, Debtors + Bank always equals VAT owed + Sales − Expenses — '
+                    .'the Books page computes each side with one Ledger::currentBalance() call per '
+                    .'ledger and shows the equation holding live. The VAT return page reads both '
+                    .'sides of the one VAT journal back apart: credit legs are output VAT on '
+                    .'sales, debit legs are input VAT on purchases.',
                 'code' => <<<'PHP'
                     $debtors = Ledger::firstOrCreate(['name' => 'Debtors'], ['type' => StandardLedgerType::ASSET]);
 

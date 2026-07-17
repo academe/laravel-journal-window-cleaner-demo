@@ -14,7 +14,7 @@ class RunVisitsController
         $status = "Charged {$result['charged']} visit(s).";
 
         if ($result['skipped'] > 0) {
-            $status = "Charged {$result['charged']} visit(s); skipped {$result['skipped']} plan(s) whose due date falls in a closed period.";
+            $status .= ' Skipped — closed period: '.implode('; ', $result['skippedPlans']).'.';
         }
 
         return redirect()

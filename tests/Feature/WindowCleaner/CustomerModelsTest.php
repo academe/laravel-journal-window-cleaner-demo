@@ -12,6 +12,8 @@ it('gives a factory customer a GBP journal in the Debtors ledger', function () {
         ->and($customer->journal->currency_code)->toBe('GBP')
         // The morph map (AppServiceProvider) stores the alias, not the FQCN.
         ->and($customer->journal->getRawOriginal('owner_type'))->toBe('customer')
+        // NamesJournal on Customer: the account name IS the customer.
+        ->and($customer->journal->displayName())->toBe($customer->name)
         ->and($customer->journal->ledger->name)->toBe(Books::LEDGER_DEBTORS)
         ->and($customer->balance()->isZero())->toBeTrue()
         ->and($customer->amountOwed()->isZero())->toBeTrue();

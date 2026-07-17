@@ -28,11 +28,14 @@ One scenario demonstrates the package's three levels **on the same journals**:
 | Level | What | Where to look |
 | --- | --- | --- |
 | A | Each customer's balance IS their journal | `app/Demos/WindowCleaner/Models/Customer.php`, Tour → Playground |
-| B | Every charge/payment is a balanced `TransactionGroup` (with VAT split via `Gbp::vatSplit`) | `app/Demos/WindowCleaner/Actions/ChargeVisit.php`, `RecordPayment.php` |
-| C | Typed ledgers: Debtors + Bank = VAT owed + Sales, live | Admin → Books, `Actions/EnsureBooksExist.php` |
+| B | Every charge/payment/purchase is a balanced `TransactionGroup` (with VAT split via `Gbp::vatSplit`) | `app/Demos/WindowCleaner/Actions/ChargeVisit.php`, `RecordPayment.php`, `RecordPurchase.php` |
+| C | Typed ledgers: Debtors + Bank = VAT owed + Sales − Expenses, live | Admin → Books, `Actions/EnsureBooksExist.php` |
 
 Plus: checkpoints (Admin → Close month), transaction references
-(`Visit`/`Payment` ⟷ journal entries), and tags (statement pages).
+(`Visit`/`Payment`/`Purchase` ⟷ journal entries), tags (statement pages), and a
+quarterly **VAT return** (Admin → VAT return) read straight off the VAT journal —
+output VAT on sales netted against input VAT on purchases of supplies and
+equipment, with a period drop-down.
 
 Start at **/window-cleaner** and follow the Tour.
 

@@ -29,6 +29,8 @@
     </table>
 
     <p>
+        <a href="{{ route('wc.admin.purchases.index') }}">Purchases</a> ·
+        <a href="{{ route('wc.admin.vat-return') }}">VAT return</a> ·
         <a href="{{ route('wc.admin.close-month.show') }}">Close month</a> ·
         <a href="{{ route('wc.admin.sms.outbox') }}">SMS outbox</a>
     </p>

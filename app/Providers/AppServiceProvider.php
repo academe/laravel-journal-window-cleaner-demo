@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Demos\WindowCleaner\Models\CompanyAccount;
 use App\Demos\WindowCleaner\Models\Customer;
 use App\Demos\WindowCleaner\Models\Payment;
+use App\Demos\WindowCleaner\Models\Purchase;
 use App\Demos\WindowCleaner\Models\Visit;
 use App\Demos\WindowCleaner\Models\Wallet;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -40,6 +41,7 @@ class AppServiceProvider extends ServiceProvider
             'wallet' => Wallet::class,
             'visit' => Visit::class,
             'payment' => Payment::class,
+            'purchase' => Purchase::class,
         ]);
     }
 }

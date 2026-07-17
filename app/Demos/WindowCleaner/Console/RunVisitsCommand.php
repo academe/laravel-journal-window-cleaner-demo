@@ -17,6 +17,10 @@ class RunVisitsCommand extends Command
 
         $this->info("Charged {$result['charged']} due visit(s), skipped {$result['skipped']} plan(s) in a closed period.");
 
+        foreach ($result['skippedPlans'] as $detail) {
+            $this->warn("  Skipped: {$detail}");
+        }
+
         return self::SUCCESS;
     }
 }
