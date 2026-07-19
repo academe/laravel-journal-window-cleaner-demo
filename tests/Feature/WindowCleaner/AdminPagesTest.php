@@ -41,6 +41,7 @@ it('shows a customer statement with running balance and tags', function () {
         ->assertOk()
         ->assertSee('Full house')
         ->assertSee('-£15.00')   // running balance after the charge
+        ->assertSee('£2.50')     // "of which VAT": the group-sibling VAT leg
         ->assertSee('kind=visit');
 });
 

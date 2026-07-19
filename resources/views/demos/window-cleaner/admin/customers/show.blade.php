@@ -46,7 +46,7 @@
 
     <h2>Statement</h2>
     <table>
-        <tr><th>Date</th><th>Memo</th><th>Tags</th><th class="num">Debit</th><th class="num">Credit</th><th class="num">Balance</th></tr>
+        <tr><th>Date</th><th>Memo</th><th>Tags</th><th class="num">Debit</th><th class="num">Credit</th><th class="num">of which VAT</th><th class="num">Balance</th></tr>
         @foreach ($statement as $row)
             <tr>
                 <td>{{ $row['transaction']->post_date->toFormattedDateString() }}</td>
@@ -54,6 +54,7 @@
                 <td>@foreach ($row['transaction']->tags as $key => $value)<small class="tag">{{ $key }}={{ $value }}</small>@endforeach</td>
                 <td class="num">{{ $row['transaction']->debit ? MoneyFormatter::format($row['transaction']->debit) : '' }}</td>
                 <td class="num">{{ $row['transaction']->credit ? MoneyFormatter::format($row['transaction']->credit) : '' }}</td>
+                <td class="num">{{ $row['vat'] ? MoneyFormatter::format($row['vat']) : '' }}</td>
                 <td class="num">{{ MoneyFormatter::format($row['running']) }}</td>
             </tr>
         @endforeach

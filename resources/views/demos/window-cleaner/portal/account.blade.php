@@ -30,12 +30,13 @@
 
     <h2>Statement</h2>
     <table>
-        <tr><th>Date</th><th>Detail</th><th class="num">Amount</th><th class="num">Balance</th></tr>
+        <tr><th>Date</th><th>Detail</th><th class="num">Amount</th><th class="num">of which VAT</th><th class="num">Balance</th></tr>
         @foreach ($statement as $row)
             <tr>
                 <td>{{ $row['transaction']->post_date->toFormattedDateString() }}</td>
                 <td>{{ $row['transaction']->memo }}</td>
                 <td class="num">{{ MoneyFormatter::format($row['transaction']->amount) }}</td>
+                <td class="num">{{ $row['vat'] ? MoneyFormatter::format($row['vat']) : '' }}</td>
                 <td class="num">{{ MoneyFormatter::format($row['running']) }}</td>
             </tr>
         @endforeach

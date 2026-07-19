@@ -37,7 +37,8 @@ it('shows the balance owed on the account page', function () {
     $this->get('/window-cleaner/portal/account')
         ->assertOk()
         ->assertSee('You owe')
-        ->assertSee('£23.00');
+        ->assertSee('£23.00')
+        ->assertSee('£3.83'); // "of which VAT" on the statement row
 });
 
 it('takes an online payment, prefilled but editable (overpay)', function () {
