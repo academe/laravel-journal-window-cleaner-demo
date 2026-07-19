@@ -13,7 +13,14 @@ With [Laravel Herd](https://herd.laravel.com) the site is already served at
 `https://laravel-journal-window-cleaner-demo.test/window-cleaner`; otherwise run
 `php artisan serve` and browse to `/window-cleaner`.
 
-No npm, no build step, SQLite only.
+No npm, no build step, SQLite only. PHP needs `ext-intl` (bundled with Herd)
+for locale-aware money display.
+
+The demo runs in one currency, GBP by default. US-based developers can set
+`DEMO_CURRENCY=USD` in `.env` — journals store their currency, so switch
+**before** seeding (or rebuild with `php artisan migrate:fresh --seed`).
+All money display and parsing goes through the package's `MoneyFormatter`,
+so the symbol and formatting follow automatically.
 
 ## The window cleaner demo
 
@@ -28,7 +35,7 @@ One scenario demonstrates the package's three levels **on the same journals**:
 | Level | What | Where to look |
 | --- | --- | --- |
 | A | Each customer's balance IS their journal | `app/Demos/WindowCleaner/Models/Customer.php`, Tour → Playground |
-| B | Every charge/payment/purchase is a balanced `TransactionGroup` (with VAT split via `Gbp::vatSplit`) | `app/Demos/WindowCleaner/Actions/ChargeVisit.php`, `RecordPayment.php`, `RecordPurchase.php` |
+| B | Every charge/payment/purchase is a balanced `TransactionGroup` (with VAT split via `Vat::split`) | `app/Demos/WindowCleaner/Actions/ChargeVisit.php`, `RecordPayment.php`, `RecordPurchase.php` |
 | C | Typed ledgers: Debtors + Bank = VAT owed + Sales − Expenses, live | Admin → Books, `Actions/EnsureBooksExist.php` |
 
 Plus: checkpoints (Admin → Close month), transaction references

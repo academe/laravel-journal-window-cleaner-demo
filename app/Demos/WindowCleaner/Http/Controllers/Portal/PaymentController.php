@@ -2,15 +2,14 @@
 
 namespace App\Demos\WindowCleaner\Http\Controllers\Portal;
 
+use Academe\LaravelJournal\Support\MoneyFormatter;
 use App\Demos\WindowCleaner\Actions\RecordPayment;
 use App\Demos\WindowCleaner\Models\Payment;
+use App\Demos\WindowCleaner\Support\Books;
 use App\Demos\WindowCleaner\Support\CurrentCustomer;
-use App\Demos\WindowCleaner\Support\Gbp;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Money\Currencies\ISOCurrencies;
-use Money\Formatter\DecimalMoneyFormatter;
 
 class PaymentController
 {
@@ -34,7 +33,7 @@ class PaymentController
             // customer type an amount.
             'suggested' => $owed->isZero()
                 ? ''
-                : (new DecimalMoneyFormatter(new ISOCurrencies))->format($owed),
+                : MoneyFormatter::decimal($owed),
         ]);
     }
 
@@ -50,7 +49,7 @@ class PaymentController
             'amount' => ['required', 'numeric', 'decimal:0,2', 'min:0.01', 'max:1000'],
         ]);
 
-        $payment = $recordPayment->run($customer, Gbp::parse((string) $validated['amount']));
+        $payment = $recordPayment->run($customer, MoneyFormatter::parseDecimal((string) $validated['amount'], Books::currency()));
 
         return redirect()->route('wc.portal.paid', $payment);
     }

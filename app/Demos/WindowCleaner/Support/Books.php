@@ -5,9 +5,13 @@ namespace App\Demos\WindowCleaner\Support;
 use Academe\LaravelJournal\Models\Journal;
 use Academe\LaravelJournal\Models\Ledger;
 use App\Demos\WindowCleaner\Models\CompanyAccount;
+use Money\Currency;
+use Money\Money;
 
 /**
- * Named lookups into the business's books (Level C).
+ * Named lookups into the business's books (Level C), plus the one
+ * monetary fact the whole app shares: its currency, read from
+ * config('demo.currency') — GBP by default, switchable to USD.
  *
  * Five typed ledgers cover the accounting equation for this business:
  * Debtors + Bank (assets) = VAT owed (liability) + Sales (income)
@@ -33,6 +37,24 @@ final class Books
     public const LEDGER_VAT = 'VAT owed';
 
     public const LEDGER_EXPENSES = 'Expenses';
+
+    public static function currencyCode(): string
+    {
+        return (string) config('demo.currency', 'GBP');
+    }
+
+    public static function currency(): Currency
+    {
+        return new Currency(self::currencyCode());
+    }
+
+    /**
+     * Minor units in the demo currency, e.g. 1500 -> £15.00 / $15.00.
+     */
+    public static function money(int $minorUnits): Money
+    {
+        return new Money($minorUnits, self::currency());
+    }
 
     public static function salesJournal(): Journal
     {

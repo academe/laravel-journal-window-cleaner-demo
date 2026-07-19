@@ -3,7 +3,7 @@
 namespace App\Demos\WindowCleaner\Models;
 
 use Academe\LaravelJournal\Concerns\HasJournalTransactions;
-use App\Demos\WindowCleaner\Support\Gbp;
+use App\Demos\WindowCleaner\Support\Books;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Money\Money;
@@ -33,6 +33,6 @@ class Visit extends Model
 
     public function priceAsMoney(): Money
     {
-        return Gbp::money($this->price);
+        return Books::money($this->price);
     }
 }

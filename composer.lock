@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "14ab9a9594fdbf877a30819b12bb62b1",
+    "content-hash": "f76db7d591af8a135216a41267951071",
     "packages": [
         {
             "name": "academe/laravel-journal",
-            "version": "1.1.0",
+            "version": "1.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/academe/laravel-ledger.git",
-                "reference": "97ed146efa767927a8bdba9831d2a23239df464f"
+                "reference": "5ea624009ffd6e68e59fcfb5db035d45a619acc1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/academe/laravel-ledger/zipball/97ed146efa767927a8bdba9831d2a23239df464f",
-                "reference": "97ed146efa767927a8bdba9831d2a23239df464f",
+                "url": "https://api.github.com/repos/academe/laravel-ledger/zipball/5ea624009ffd6e68e59fcfb5db035d45a619acc1",
+                "reference": "5ea624009ffd6e68e59fcfb5db035d45a619acc1",
                 "shasum": ""
             },
             "require": {
@@ -66,9 +66,9 @@
             ],
             "support": {
                 "issues": "https://github.com/academe/laravel-ledger/issues",
-                "source": "https://github.com/academe/laravel-ledger/tree/1.1.0"
+                "source": "https://github.com/academe/laravel-ledger/tree/1.2.1"
             },
-            "time": "2026-07-17T16:49:52+00:00"
+            "time": "2026-07-19T16:13:44+00:00"
         },
         {
             "name": "brick/math",

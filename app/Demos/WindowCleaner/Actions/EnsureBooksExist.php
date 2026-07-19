@@ -20,7 +20,8 @@ use App\Demos\WindowCleaner\Support\Books;
  * accounting accounts (Sales, VAT, Bank, Expenses) each get a stand-in
  * CompanyAccount row to own their journal.
  *
- * initJournal('GBP') throws JournalAlreadyExists on a repeat call,
+ * initJournal() (in the config('demo.currency') currency, GBP by
+ * default) throws JournalAlreadyExists on a repeat call,
  * hence the journal()->doesntExist() guard — that guard is what makes
  * the whole action safe to re-run. Safe to run repeatedly: existing
  * rows are reused, so the seeder, tests, and factories can all call
@@ -40,7 +41,7 @@ class EnsureBooksExist
             $account = CompanyAccount::firstOrCreate(['name' => $name]);
 
             if ($account->journal()->doesntExist()) {
-                $account->initJournal('GBP')->assignToLedger($ledger);
+                $account->initJournal(Books::currencyCode())->assignToLedger($ledger);
             }
         }
     }

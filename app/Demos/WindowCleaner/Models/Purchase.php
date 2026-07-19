@@ -3,7 +3,7 @@
 namespace App\Demos\WindowCleaner\Models;
 
 use Academe\LaravelJournal\Concerns\HasJournalTransactions;
-use App\Demos\WindowCleaner\Support\Gbp;
+use App\Demos\WindowCleaner\Support\Books;
 use Database\Factories\PurchaseFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -34,6 +34,6 @@ class Purchase extends Model
 
     public function priceAsMoney(): Money
     {
-        return Gbp::money($this->price);
+        return Books::money($this->price);
     }
 }

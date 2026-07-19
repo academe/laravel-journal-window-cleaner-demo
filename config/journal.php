@@ -11,7 +11,7 @@ return [
      * ISO 4217 currency code used when a journal is initialised
      * without an explicit currency.
      */
-    'base_currency' => 'GBP',
+    'base_currency' => env('DEMO_CURRENCY', 'GBP'),
 
     /*
      * Override these to substitute your own model classes.

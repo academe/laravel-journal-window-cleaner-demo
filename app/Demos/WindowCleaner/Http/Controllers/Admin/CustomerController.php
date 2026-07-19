@@ -2,11 +2,12 @@
 
 namespace App\Demos\WindowCleaner\Http\Controllers\Admin;
 
+use Academe\LaravelJournal\Support\MoneyFormatter;
 use App\Demos\WindowCleaner\Actions\ChargeVisit;
 use App\Demos\WindowCleaner\Actions\RecordPayment;
 use App\Demos\WindowCleaner\Models\Customer;
 use App\Demos\WindowCleaner\Models\Service;
-use App\Demos\WindowCleaner\Support\Gbp;
+use App\Demos\WindowCleaner\Support\Books;
 use App\Demos\WindowCleaner\Support\Statement;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -39,7 +40,7 @@ class CustomerController
         ]);
 
         $service = Service::findOrFail($validated['service_id']);
-        $chargeVisit->run($customer, $service, Gbp::parse((string) $validated['price']));
+        $chargeVisit->run($customer, $service, MoneyFormatter::parseDecimal((string) $validated['price'], Books::currency()));
 
         return redirect()
             ->route('wc.admin.customers.show', $customer)
@@ -52,10 +53,10 @@ class CustomerController
             'amount' => ['required', 'numeric', 'decimal:0,2', 'min:0.01', 'max:1000'],
         ]);
 
-        $payment = $recordPayment->run($customer, Gbp::parse((string) $validated['amount']), null, 'manual');
+        $payment = $recordPayment->run($customer, MoneyFormatter::parseDecimal((string) $validated['amount'], Books::currency()), null, 'manual');
 
         return redirect()
             ->route('wc.admin.customers.show', $customer)
-            ->with('status', 'Payment recorded: '.Gbp::format($payment->amountAsMoney()).'.');
+            ->with('status', 'Payment recorded: '.MoneyFormatter::format($payment->amountAsMoney()).'.');
     }
 }

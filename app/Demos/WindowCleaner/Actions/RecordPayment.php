@@ -2,6 +2,7 @@
 
 namespace App\Demos\WindowCleaner\Actions;
 
+use Academe\LaravelJournal\Enums\EntryType;
 use Academe\LaravelJournal\TransactionGroup;
 use App\Demos\WindowCleaner\Models\Customer;
 use App\Demos\WindowCleaner\Models\Payment;
@@ -46,8 +47,8 @@ class RecordPayment
             $memo = "Payment received ({$method})";
 
             $groupUuid = TransactionGroup::make()
-                ->addTransaction($customer->journal, 'credit', $amount, $memo, $payment, $date)
-                ->addTransaction(Books::bankJournal(), 'debit', $amount, $memo, $payment, $date)
+                ->addTransaction($customer->journal, EntryType::Credit, $amount, $memo, $payment, $date)
+                ->addTransaction(Books::bankJournal(), EntryType::Debit, $amount, $memo, $payment, $date)
                 ->commit();
 
             $this->tagGroup($groupUuid, [

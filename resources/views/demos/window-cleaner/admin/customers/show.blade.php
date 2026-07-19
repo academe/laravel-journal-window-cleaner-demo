@@ -1,12 +1,12 @@
 @extends('demos.window-cleaner.layout')
 @section('title', $customer->name)
 @section('content')
-    @php use App\Demos\WindowCleaner\Support\Gbp; @endphp
+    @php use Academe\LaravelJournal\Support\MoneyFormatter; @endphp
     <h1>{{ $customer->name }}</h1>
     <p>{{ $customer->address }} · {{ $customer->phone }}</p>
     @php $balance = $customer->balance(); @endphp
     <p class="big {{ $balance->isNegative() ? 'owes' : 'credit' }}">
-        {{ $balance->isNegative() ? 'Owes '.Gbp::format($balance->absolute()) : 'In credit '.Gbp::format($balance) }}
+        {{ $balance->isNegative() ? 'Owes '.MoneyFormatter::format($balance->absolute()) : 'In credit '.MoneyFormatter::format($balance) }}
     </p>
 
     <h2>Services</h2>
@@ -15,7 +15,7 @@
         @foreach ($plans as $plan)
             <tr>
                 <td>{{ $plan->service->name }}</td>
-                <td class="num">{{ Gbp::format($plan->priceAsMoney()) }}</td>
+                <td class="num">{{ MoneyFormatter::format($plan->priceAsMoney()) }}</td>
                 <td class="num">{{ $plan->interval_weeks }}w</td>
                 <td>{{ $plan->next_due_on->toFormattedDateString() }}</td>
                 <td>{{ $plan->active ? 'yes' : 'no' }}</td>
@@ -52,9 +52,9 @@
                 <td>{{ $row['transaction']->post_date->toFormattedDateString() }}</td>
                 <td>{{ $row['transaction']->memo }}</td>
                 <td>@foreach ($row['transaction']->tags as $key => $value)<small class="tag">{{ $key }}={{ $value }}</small>@endforeach</td>
-                <td class="num">{{ $row['transaction']->debit ? Gbp::format($row['transaction']->debit) : '' }}</td>
-                <td class="num">{{ $row['transaction']->credit ? Gbp::format($row['transaction']->credit) : '' }}</td>
-                <td class="num">{{ Gbp::format($row['running']) }}</td>
+                <td class="num">{{ $row['transaction']->debit ? MoneyFormatter::format($row['transaction']->debit) : '' }}</td>
+                <td class="num">{{ $row['transaction']->credit ? MoneyFormatter::format($row['transaction']->credit) : '' }}</td>
+                <td class="num">{{ MoneyFormatter::format($row['running']) }}</td>
             </tr>
         @endforeach
     </table>

@@ -3,7 +3,7 @@
 namespace App\Demos\WindowCleaner\Models;
 
 use Academe\LaravelJournal\Concerns\HasJournalTransactions;
-use App\Demos\WindowCleaner\Support\Gbp;
+use App\Demos\WindowCleaner\Support\Books;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Money\Money;
@@ -28,6 +28,6 @@ class Payment extends Model
 
     public function amountAsMoney(): Money
     {
-        return Gbp::money($this->amount);
+        return Books::money($this->amount);
     }
 }

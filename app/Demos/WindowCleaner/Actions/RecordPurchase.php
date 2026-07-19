@@ -2,11 +2,12 @@
 
 namespace App\Demos\WindowCleaner\Actions;
 
+use Academe\LaravelJournal\Enums\EntryType;
 use Academe\LaravelJournal\TransactionGroup;
 use App\Demos\WindowCleaner\Models\Purchase;
 use App\Demos\WindowCleaner\Support\Books;
-use App\Demos\WindowCleaner\Support\Gbp;
 use App\Demos\WindowCleaner\Support\TagsTransactionGroups;
+use App\Demos\WindowCleaner\Support\Vat;
 use Carbon\CarbonInterface;
 use Illuminate\Support\Facades\DB;
 use Money\Money;
@@ -46,7 +47,7 @@ class RecordPurchase
         return DB::transaction(function () use ($supplier, $category, $gross, $date) {
             $date ??= now();
 
-            ['net' => $net, 'vat' => $vat] = Gbp::vatSplit($gross);
+            ['net' => $net, 'vat' => $vat] = Vat::split($gross);
 
             $purchase = Purchase::create([
                 'supplier' => $supplier,
@@ -58,9 +59,9 @@ class RecordPurchase
             $memo = ucfirst($category)." from {$supplier} on {$date->toDateString()}";
 
             $groupUuid = TransactionGroup::make()
-                ->addTransaction(Books::expensesJournal(), 'debit', $net, $memo, $purchase, $date)
-                ->addTransaction(Books::vatJournal(), 'debit', $vat, "VAT on {$memo}", $purchase, $date)
-                ->addTransaction(Books::bankJournal(), 'credit', $gross, $memo, $purchase, $date)
+                ->addTransaction(Books::expensesJournal(), EntryType::Debit, $net, $memo, $purchase, $date)
+                ->addTransaction(Books::vatJournal(), EntryType::Debit, $vat, "VAT on {$memo}", $purchase, $date)
+                ->addTransaction(Books::bankJournal(), EntryType::Credit, $gross, $memo, $purchase, $date)
                 ->commit();
 
             $this->tagGroup($groupUuid, [

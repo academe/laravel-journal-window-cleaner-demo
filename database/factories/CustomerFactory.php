@@ -27,7 +27,7 @@ class CustomerFactory extends Factory
         // just use the factory with no extra setup.
         return $this->afterCreating(function (Customer $customer) {
             app(EnsureBooksExist::class)->run();
-            $customer->initJournal('GBP')->assignToLedger(Books::debtorsLedger());
+            $customer->initJournal(Books::currencyCode())->assignToLedger(Books::debtorsLedger());
         });
     }
 }

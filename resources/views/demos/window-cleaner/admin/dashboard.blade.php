@@ -1,12 +1,12 @@
 @extends('demos.window-cleaner.layout')
 @section('title', 'Admin dashboard')
 @section('content')
-    @php use App\Demos\WindowCleaner\Support\Gbp; @endphp
+    @php use Academe\LaravelJournal\Support\MoneyFormatter; @endphp
     <h1>Dashboard</h1>
     <div class="cards">
-        <div><h2>Owed by customers</h2><p class="big owes">{{ Gbp::format($totalOwed) }}</p>
+        <div><h2>Owed by customers</h2><p class="big owes">{{ MoneyFormatter::format($totalOwed) }}</p>
             <p><a href="{{ route('wc.admin.customers.index') }}">Customers</a></p></div>
-        <div><h2>Bank balance</h2><p class="big">{{ Gbp::format($bankBalance) }}</p>
+        <div><h2>Bank balance</h2><p class="big">{{ MoneyFormatter::format($bankBalance) }}</p>
             <p><a href="{{ route('wc.admin.books') }}">The books</a></p></div>
         <div><h2>Visits due</h2><p class="big">{{ $duePlans->count() }}</p>
             <form method="post" action="{{ route('wc.admin.run-visits') }}">@csrf<button>Run due visits</button></form></div>
@@ -20,7 +20,7 @@
                 <td>{{ $plan->next_due_on->toFormattedDateString() }}</td>
                 <td><a href="{{ route('wc.admin.customers.show', $plan->customer) }}">{{ $plan->customer->name }}</a></td>
                 <td>{{ $plan->service->name }}</td>
-                <td class="num">{{ Gbp::format($plan->priceAsMoney()) }}</td>
+                <td class="num">{{ MoneyFormatter::format($plan->priceAsMoney()) }}</td>
                 <td class="num">{{ $plan->interval_weeks }}w</td>
             </tr>
         @empty

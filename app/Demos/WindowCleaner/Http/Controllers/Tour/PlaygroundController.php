@@ -2,19 +2,20 @@
 
 namespace App\Demos\WindowCleaner\Http\Controllers\Tour;
 
+use Academe\LaravelJournal\Enums\EntryType;
 use Academe\LaravelJournal\Exceptions\CurrencyMismatch;
+use Academe\LaravelJournal\Support\MoneyFormatter;
 use App\Demos\WindowCleaner\Models\Wallet;
+use App\Demos\WindowCleaner\Support\Books;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Money\Currencies\ISOCurrencies;
-use Money\Currency;
-use Money\Parser\DecimalMoneyParser;
 
 /**
  * Level A in isolation: a scratch GBP wallet you can post raw credits
- * and debits to. Posting USD provokes the package's CurrencyMismatch —
- * the demo's one deliberately-broken button.
+ * and debits to. Posting in the currency the wallet does NOT use
+ * provokes the package's CurrencyMismatch — the demo's one
+ * deliberately-broken button.
  */
 class PlaygroundController
 {
@@ -41,18 +42,20 @@ class PlaygroundController
             'memo' => ['nullable', 'string', 'max:100'],
         ]);
 
-        $money = (new DecimalMoneyParser(new ISOCurrencies))
-            ->parse((string) $validated['amount'], new Currency($validated['currency']));
+        $direction = EntryType::from($validated['direction']);
+        $money = MoneyFormatter::parseDecimal((string) $validated['amount'], $validated['currency']);
 
         try {
-            $this->wallet()->journal->{$validated['direction']}($money, $validated['memo'] ?? null);
+            // EntryType's backing values match the Journal method names,
+            // so the enum case selects the method to call.
+            $this->wallet()->journal->{$direction->value}($money, $validated['memo'] ?? null);
         } catch (CurrencyMismatch $e) {
             return redirect()->route('wc.tour.playground')
                 ->with('error', 'CurrencyMismatch: '.$e->getMessage());
         }
 
         return redirect()->route('wc.tour.playground')
-            ->with('status', ucfirst($validated['direction']).' posted.');
+            ->with('status', ucfirst($direction->value).' posted.');
     }
 
     private function wallet(): Wallet
@@ -60,7 +63,7 @@ class PlaygroundController
         $wallet = Wallet::firstOrCreate(['name' => 'playground']);
 
         if ($wallet->journal()->doesntExist()) {
-            $wallet->initJournal('GBP');
+            $wallet->initJournal(Books::currencyCode());
         }
 
         return $wallet->load('journal');

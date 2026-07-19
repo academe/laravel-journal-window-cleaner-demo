@@ -60,12 +60,12 @@ class TourController
                     .'tagged. The VAT-inclusive price is split using direct computation (VAT extracted at rate/(100+rate) rounded down, net is the remainder), so no '
                     .'penny is created or lost (try £14.99).',
                 'code' => <<<'PHP'
-                    ['net' => $net, 'vat' => $vat] = Gbp::vatSplit($grossPrice);
+                    ['net' => $net, 'vat' => $vat] = Vat::split($grossPrice);
 
                     TransactionGroup::make()
-                        ->addTransaction($customer->journal, 'debit', $grossPrice, $memo, $visit, $date)
-                        ->addTransaction(Books::salesJournal(), 'credit', $net, $memo, $visit, $date)
-                        ->addTransaction(Books::vatJournal(), 'credit', $vat, "VAT on {$memo}", $visit, $date)
+                        ->addTransaction($customer->journal, EntryType::Debit, $grossPrice, $memo, $visit, $date)
+                        ->addTransaction(Books::salesJournal(), EntryType::Credit, $net, $memo, $visit, $date)
+                        ->addTransaction(Books::vatJournal(), EntryType::Credit, $vat, "VAT on {$memo}", $visit, $date)
                         ->commit();
                     PHP,
                 'file' => 'app/Demos/WindowCleaner/Actions/ChargeVisit.php',
@@ -85,7 +85,7 @@ class TourController
                 'code' => <<<'PHP'
                     $debtors = Ledger::firstOrCreate(['name' => 'Debtors'], ['type' => StandardLedgerType::ASSET]);
 
-                    $customer->initJournal('GBP')->assignToLedger($debtors);
+                    $customer->initJournal(Books::currencyCode())->assignToLedger($debtors);
 
                     Books::debtorsLedger()->currentBalance('GBP');  // one SQL aggregate
                     PHP,

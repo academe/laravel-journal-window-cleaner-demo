@@ -157,13 +157,13 @@ final class VatReturn
             'date' => $vatLeg->post_date,
             'memo' => $vatLeg->memo,
             'reference' => $vatLeg->reference,
-            'net' => $net ?? Gbp::money(0),
+            'net' => $net ?? Books::money(0),
             'vat' => $vat,
         ];
     }
 
     private static function total(Collection $rows, string $key): Money
     {
-        return $rows->reduce(fn (Money $sum, array $row) => $sum->add($row[$key]), Gbp::money(0));
+        return $rows->reduce(fn (Money $sum, array $row) => $sum->add($row[$key]), Books::money(0));
     }
 }

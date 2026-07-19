@@ -1,7 +1,7 @@
 @extends('demos.window-cleaner.layout')
 @section('title', 'VAT return')
 @section('content')
-    @php use App\Demos\WindowCleaner\Support\Gbp; @endphp
+    @php use Academe\LaravelJournal\Support\MoneyFormatter; @endphp
     <h1>VAT return</h1>
     <p>Read straight off the VAT journal for the quarter: credit legs are output
     VAT on sales, debit legs are input VAT on purchases. Nothing is stored — the
@@ -22,10 +22,10 @@
         </form>
 
         <div class="cards">
-            <div><h2>Output VAT (sales)</h2><p class="big">{{ Gbp::format($report['outputVat']) }}</p></div>
-            <div><h2>Input VAT (purchases)</h2><p class="big">{{ Gbp::format($report['inputVat']) }}</p></div>
+            <div><h2>Output VAT (sales)</h2><p class="big">{{ MoneyFormatter::format($report['outputVat']) }}</p></div>
+            <div><h2>Input VAT (purchases)</h2><p class="big">{{ MoneyFormatter::format($report['inputVat']) }}</p></div>
             <div><h2>Net VAT due</h2>
-                <p class="big {{ $report['netDue']->isNegative() ? 'credit' : 'owes' }}">{{ Gbp::format($report['netDue']) }}</p>
+                <p class="big {{ $report['netDue']->isNegative() ? 'credit' : 'owes' }}">{{ MoneyFormatter::format($report['netDue']) }}</p>
                 <p>{{ $report['netDue']->isNegative() ? 'Reclaimable from HMRC.' : 'Payable to HMRC.' }}</p></div>
         </div>
 
@@ -40,13 +40,13 @@
                     <td>{{ $row['date']->toFormattedDateString() }}</td>
                     <td>{{ $row['memo'] }}</td>
                     <td>{{ $row['reference']?->customer?->name }}</td>
-                    <td class="num">{{ Gbp::format($row['net']) }}</td>
-                    <td class="num">{{ Gbp::format($row['vat']) }}</td>
+                    <td class="num">{{ MoneyFormatter::format($row['net']) }}</td>
+                    <td class="num">{{ MoneyFormatter::format($row['vat']) }}</td>
                 </tr>
             @empty
                 <tr><td colspan="5">No sales this quarter.</td></tr>
             @endforelse
-            <tr><th colspan="3">Total</th><th class="num">{{ Gbp::format($report['netSales']) }}</th><th class="num">{{ Gbp::format($report['outputVat']) }}</th></tr>
+            <tr><th colspan="3">Total</th><th class="num">{{ MoneyFormatter::format($report['netSales']) }}</th><th class="num">{{ MoneyFormatter::format($report['outputVat']) }}</th></tr>
         </table>
 
         <h2>Purchases (input VAT)</h2>
@@ -57,13 +57,13 @@
                     <td>{{ $row['date']->toFormattedDateString() }}</td>
                     <td>{{ $row['memo'] }}</td>
                     <td>{{ $row['reference']?->category }}</td>
-                    <td class="num">{{ Gbp::format($row['net']) }}</td>
-                    <td class="num">{{ Gbp::format($row['vat']) }}</td>
+                    <td class="num">{{ MoneyFormatter::format($row['net']) }}</td>
+                    <td class="num">{{ MoneyFormatter::format($row['vat']) }}</td>
                 </tr>
             @empty
                 <tr><td colspan="5">No purchases this quarter.</td></tr>
             @endforelse
-            <tr><th colspan="3">Total</th><th class="num">{{ Gbp::format($report['netPurchases']) }}</th><th class="num">{{ Gbp::format($report['inputVat']) }}</th></tr>
+            <tr><th colspan="3">Total</th><th class="num">{{ MoneyFormatter::format($report['netPurchases']) }}</th><th class="num">{{ MoneyFormatter::format($report['inputVat']) }}</th></tr>
         </table>
     @endif
 @endsection

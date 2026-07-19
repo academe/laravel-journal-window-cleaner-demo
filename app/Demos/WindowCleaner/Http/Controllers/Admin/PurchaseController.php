@@ -2,9 +2,10 @@
 
 namespace App\Demos\WindowCleaner\Http\Controllers\Admin;
 
+use Academe\LaravelJournal\Support\MoneyFormatter;
 use App\Demos\WindowCleaner\Actions\RecordPurchase;
 use App\Demos\WindowCleaner\Models\Purchase;
-use App\Demos\WindowCleaner\Support\Gbp;
+use App\Demos\WindowCleaner\Support\Books;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -33,11 +34,11 @@ class PurchaseController
         $purchase = $recordPurchase->run(
             $validated['supplier'],
             $validated['category'],
-            Gbp::parse($validated['price']),
+            MoneyFormatter::parseDecimal($validated['price'], Books::currency()),
         );
 
         return redirect()
             ->route('wc.admin.purchases.index')
-            ->with('status', 'Recorded '.Gbp::format($purchase->priceAsMoney())." {$purchase->category} purchase from {$purchase->supplier}.");
+            ->with('status', 'Recorded '.MoneyFormatter::format($purchase->priceAsMoney())." {$purchase->category} purchase from {$purchase->supplier}.");
     }
 }

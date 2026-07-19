@@ -1,16 +1,16 @@
 @extends('demos.window-cleaner.layout')
 @section('title', 'My account')
 @section('content')
-    @php use App\Demos\WindowCleaner\Support\Gbp; @endphp
+    @php use Academe\LaravelJournal\Support\MoneyFormatter; @endphp
     <h1>My account</h1>
     <p>Acting as <strong>{{ $customer->name }}</strong> — <a href="{{ route('wc.portal.switch') }}">switch</a></p>
 
     @php $balance = $customer->balance(); @endphp
     @if ($balance->isNegative())
-        <p class="big owes">You owe {{ Gbp::format($balance->absolute()) }}</p>
+        <p class="big owes">You owe {{ MoneyFormatter::format($balance->absolute()) }}</p>
         <p><a href="{{ route('wc.portal.pay') }}"><strong>Pay online</strong></a></p>
     @elseif ($balance->isPositive())
-        <p class="big credit">You are {{ Gbp::format($balance) }} in credit</p>
+        <p class="big credit">You are {{ MoneyFormatter::format($balance) }} in credit</p>
     @else
         <p class="big">Your balance is settled — nothing to pay.</p>
     @endif
@@ -21,7 +21,7 @@
         @foreach ($plans as $plan)
             <tr>
                 <td>{{ $plan->service->name }}</td>
-                <td class="num">{{ Gbp::format($plan->priceAsMoney()) }}</td>
+                <td class="num">{{ MoneyFormatter::format($plan->priceAsMoney()) }}</td>
                 <td>{{ $plan->interval_weeks }} week(s)</td>
                 <td>{{ $plan->next_due_on->toFormattedDateString() }}</td>
             </tr>
@@ -35,8 +35,8 @@
             <tr>
                 <td>{{ $row['transaction']->post_date->toFormattedDateString() }}</td>
                 <td>{{ $row['transaction']->memo }}</td>
-                <td class="num">{{ Gbp::format($row['transaction']->amount) }}</td>
-                <td class="num">{{ Gbp::format($row['running']) }}</td>
+                <td class="num">{{ MoneyFormatter::format($row['transaction']->amount) }}</td>
+                <td class="num">{{ MoneyFormatter::format($row['running']) }}</td>
             </tr>
         @endforeach
     </table>

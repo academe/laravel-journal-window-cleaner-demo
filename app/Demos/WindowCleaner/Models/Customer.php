@@ -4,7 +4,7 @@ namespace App\Demos\WindowCleaner\Models;
 
 use Academe\LaravelJournal\Concerns\HasJournal;
 use Academe\LaravelJournal\Contracts\NamesJournal;
-use App\Demos\WindowCleaner\Support\Gbp;
+use App\Demos\WindowCleaner\Support\Books;
 use Database\Factories\CustomerFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -47,7 +47,7 @@ class Customer extends Model implements NamesJournal
     {
         $balance = $this->balance();
 
-        return $balance->isNegative() ? $balance->absolute() : Gbp::money(0);
+        return $balance->isNegative() ? $balance->absolute() : Books::money(0);
     }
 
     /**

@@ -1,7 +1,7 @@
 @extends('demos.window-cleaner.layout')
 @section('title', 'Purchases')
 @section('content')
-    @php use App\Demos\WindowCleaner\Support\Gbp; @endphp
+    @php use Academe\LaravelJournal\Support\MoneyFormatter; @endphp
     <h1>Purchases</h1>
     <p>Supplies and equipment, paid at the till. Each purchase posts one balanced
     group: net cost to Expenses, input VAT to the VAT journal (reducing what is
@@ -18,7 +18,7 @@
             </select>
         </label>
         @error('category')<p class="flash error">{{ $message }}</p>@enderror
-        <label>Price (£, VAT-inclusive) <input name="price" inputmode="decimal" value="{{ old('price') }}" required></label>
+        <label>Price ({{ config('demo.currency') }}, VAT-inclusive) <input name="price" inputmode="decimal" value="{{ old('price') }}" required></label>
         @error('price')<p class="flash error">{{ $message }}</p>@enderror
         <button>Record purchase</button>
     </form>
@@ -31,7 +31,7 @@
                 <td>{{ $purchase->purchased_on->toFormattedDateString() }}</td>
                 <td>{{ $purchase->supplier }}</td>
                 <td>{{ $purchase->category }}</td>
-                <td class="num">{{ Gbp::format($purchase->priceAsMoney()) }}</td>
+                <td class="num">{{ MoneyFormatter::format($purchase->priceAsMoney()) }}</td>
             </tr>
         @empty
             <tr><td colspan="4">No purchases yet.</td></tr>

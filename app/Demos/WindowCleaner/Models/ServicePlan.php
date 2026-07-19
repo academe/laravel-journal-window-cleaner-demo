@@ -2,7 +2,7 @@
 
 namespace App\Demos\WindowCleaner\Models;
 
-use App\Demos\WindowCleaner\Support\Gbp;
+use App\Demos\WindowCleaner\Support\Books;
 use Carbon\CarbonInterface;
 use Database\Factories\ServicePlanFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -43,7 +43,7 @@ class ServicePlan extends Model
 
     public function priceAsMoney(): Money
     {
-        return Gbp::money($this->price);
+        return Books::money($this->price);
     }
 
     public function isDueOn(CarbonInterface $date): bool

@@ -10,11 +10,11 @@ class BooksController
 {
     public function show(): View
     {
-        $debtors = Books::debtorsLedger()->currentBalance('GBP');
-        $bank = Books::bankLedger()->currentBalance('GBP');
-        $sales = Books::salesLedger()->currentBalance('GBP');
-        $vat = Books::vatLedger()->currentBalance('GBP');
-        $expenses = Books::expensesLedger()->currentBalance('GBP');
+        $debtors = Books::debtorsLedger()->currentBalance(Books::currencyCode());
+        $bank = Books::bankLedger()->currentBalance(Books::currencyCode());
+        $sales = Books::salesLedger()->currentBalance(Books::currencyCode());
+        $vat = Books::vatLedger()->currentBalance(Books::currencyCode());
+        $expenses = Books::expensesLedger()->currentBalance(Books::currencyCode());
 
         // Recent groups, newest first: find the 10 most recent distinct
         // group UUIDs (by their latest entry's post_date/created_at),

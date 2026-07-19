@@ -2,14 +2,15 @@
 
 namespace App\Demos\WindowCleaner\Actions;
 
+use Academe\LaravelJournal\Enums\EntryType;
 use Academe\LaravelJournal\TransactionGroup;
 use App\Demos\WindowCleaner\Models\Customer;
 use App\Demos\WindowCleaner\Models\Service;
 use App\Demos\WindowCleaner\Models\ServicePlan;
 use App\Demos\WindowCleaner\Models\Visit;
 use App\Demos\WindowCleaner\Support\Books;
-use App\Demos\WindowCleaner\Support\Gbp;
 use App\Demos\WindowCleaner\Support\TagsTransactionGroups;
+use App\Demos\WindowCleaner\Support\Vat;
 use Carbon\CarbonInterface;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -49,7 +50,7 @@ class ChargeVisit
         return DB::transaction(function () use ($customer, $service, $grossPrice, $plan, $date) {
             $date ??= now();
 
-            ['net' => $net, 'vat' => $vat] = Gbp::vatSplit($grossPrice);
+            ['net' => $net, 'vat' => $vat] = Vat::split($grossPrice);
 
             $visit = Visit::create([
                 'customer_id' => $customer->id,
@@ -62,9 +63,9 @@ class ChargeVisit
             $memo = "{$service->name} on {$date->toDateString()}";
 
             $groupUuid = TransactionGroup::make()
-                ->addTransaction($customer->journal, 'debit', $grossPrice, $memo, $visit, $date)
-                ->addTransaction(Books::salesJournal(), 'credit', $net, $memo, $visit, $date)
-                ->addTransaction(Books::vatJournal(), 'credit', $vat, "VAT on {$memo}", $visit, $date)
+                ->addTransaction($customer->journal, EntryType::Debit, $grossPrice, $memo, $visit, $date)
+                ->addTransaction(Books::salesJournal(), EntryType::Credit, $net, $memo, $visit, $date)
+                ->addTransaction(Books::vatJournal(), EntryType::Credit, $vat, "VAT on {$memo}", $visit, $date)
                 ->commit();
 
             $this->tagGroup($groupUuid, [

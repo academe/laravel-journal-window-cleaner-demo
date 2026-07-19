@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use Academe\LaravelJournal\Support\MoneyFormatter;
 use App\Demos\WindowCleaner\Actions\CloseMonth;
 use App\Demos\WindowCleaner\Actions\EnsureBooksExist;
 use App\Demos\WindowCleaner\Actions\RecordPayment;
@@ -12,7 +13,6 @@ use App\Demos\WindowCleaner\Models\Customer;
 use App\Demos\WindowCleaner\Models\Service;
 use App\Demos\WindowCleaner\Models\ServicePlan;
 use App\Demos\WindowCleaner\Support\Books;
-use App\Demos\WindowCleaner\Support\Gbp;
 use Carbon\CarbonInterface;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Collection;
@@ -88,7 +88,7 @@ class WindowCleanerSeeder extends Seeder
             [$name, $address, $phone, $persona, $plans] = $row;
 
             $customer = Customer::create(compact('name', 'address', 'phone'));
-            $customer->initJournal('GBP')->assignToLedger(Books::debtorsLedger());
+            $customer->initJournal(Books::currencyCode())->assignToLedger(Books::debtorsLedger());
 
             // Transient property, read only by maybePay() during replay.
             $customer->persona = $persona;
@@ -97,7 +97,7 @@ class WindowCleanerSeeder extends Seeder
                 ServicePlan::create([
                     'customer_id' => $customer->id,
                     'service_id' => $services[$serviceName]->id,
-                    'price' => (int) Gbp::parse($price)->getAmount(),
+                    'price' => (int) MoneyFormatter::parseDecimal($price, Books::currency())->getAmount(),
                     'interval_weeks' => $intervalWeeks,
                     'next_due_on' => $start->copy()->addDays($dayOffset),
                 ]);
@@ -138,12 +138,12 @@ class WindowCleanerSeeder extends Seeder
             // (£23.94 — awkward pennies exercise the VAT split), plus the
             // one-off equipment buys above.
             if ($day->isMonday() && $day->day <= 7) {
-                $recordPurchase->run('Squeaky Wholesale', 'supplies', Gbp::parse('23.94'), $day);
+                $recordPurchase->run('Squeaky Wholesale', 'supplies', MoneyFormatter::parseDecimal('23.94', Books::currency()), $day);
             }
 
             if (isset($equipment[$day->toDateString()])) {
                 [$supplier, $price] = $equipment[$day->toDateString()];
-                $recordPurchase->run($supplier, 'equipment', Gbp::parse($price), $day);
+                $recordPurchase->run($supplier, 'equipment', MoneyFormatter::parseDecimal($price, Books::currency()), $day);
             }
 
             if ($day->isSameDay($closeOn)) {
@@ -159,18 +159,18 @@ class WindowCleanerSeeder extends Seeder
     private function maybePay(RecordPayment $recordPayment, Customer $customer, CarbonInterface $day): void
     {
         $balance = $customer->journal->balanceOn($day);
-        $owed = $balance->isNegative() ? $balance->absolute() : Gbp::money(0);
+        $owed = $balance->isNegative() ? $balance->absolute() : Books::money(0);
 
         if ($customer->persona === 'prompt' && $day->isFriday() && $owed->isPositive()) {
             $recordPayment->run($customer, $owed, $day);
         }
 
         if ($customer->persona === 'overpayer' && $day->day === 1) {
-            $recordPayment->run($customer, Gbp::parse('20.00'), $day);
+            $recordPayment->run($customer, MoneyFormatter::parseDecimal('20.00', Books::currency()), $day);
         }
 
         if ($customer->persona === 'slow' && $day->isFriday() && $day->day <= 7
-            && $owed->greaterThanOrEqual(Gbp::parse('1.00'))) {
+            && $owed->greaterThanOrEqual(MoneyFormatter::parseDecimal('1.00', Books::currency()))) {
             $recordPayment->run($customer, $this->half($owed), $day);
         }
 
@@ -179,6 +179,6 @@ class WindowCleanerSeeder extends Seeder
 
     private function half(Money $amount): Money
     {
-        return Gbp::money(intdiv((int) $amount->getAmount(), 2));
+        return Books::money(intdiv((int) $amount->getAmount(), 2));
     }
 }
