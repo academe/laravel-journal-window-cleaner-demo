@@ -4,7 +4,7 @@
     @php use Academe\LaravelJournal\Support\MoneyFormatter; @endphp
     <h1>The books (Level C)</h1>
     <p>Every journal belongs to a typed ledger, so the whole business reads as an
-    accounting equation. Each balance below is one <code>Ledger::currentBalance()</code> call.</p>
+    accounting equation. Each balance below is one <code>Ledger::normalBalanceOn()</code> call.</p>
 
     <table>
         <tr><th>Ledger</th><th>Type</th><th class="num">Balance</th></tr>

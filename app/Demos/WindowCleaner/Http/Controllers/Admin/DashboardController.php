@@ -28,7 +28,7 @@ class DashboardController
         return view('demos.window-cleaner.admin.dashboard', [
             'duePlans' => $duePlans,
             'totalOwed' => $totalOwed,
-            'bankBalance' => Books::bankLedger()->currentBalance(Books::currencyCode()),
+            'bankBalance' => Books::bankLedger()->normalBalanceOn(Books::currencyCode()),
         ]);
     }
 }

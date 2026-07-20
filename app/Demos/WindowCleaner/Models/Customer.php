@@ -42,12 +42,16 @@ class Customer extends Model implements NamesJournal
 
     /**
      * What the customer owes, as a positive amount (zero when in credit).
+     *
+     * The journal sits in the Debtors (asset, debit-normal) ledger, so
+     * normalBalanceOn() already reports debit − credit: positive when
+     * the customer owes, no manual sign-flipping needed.
      */
     public function amountOwed(): Money
     {
-        $balance = $this->balance();
+        $owed = $this->journal->normalBalanceOn();
 
-        return $balance->isNegative() ? $balance->absolute() : Books::money(0);
+        return $owed->isPositive() ? $owed : Books::money(0);
     }
 
     /**

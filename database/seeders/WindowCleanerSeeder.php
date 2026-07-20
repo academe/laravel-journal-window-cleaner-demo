@@ -158,8 +158,8 @@ class WindowCleanerSeeder extends Seeder
      */
     private function maybePay(RecordPayment $recordPayment, Customer $customer, CarbonInterface $day): void
     {
-        $balance = $customer->journal->balanceOn($day);
-        $owed = $balance->isNegative() ? $balance->absolute() : Books::money(0);
+        // Debit-normal (Debtors) journal: positive means the customer owes.
+        $owed = $customer->journal->normalBalanceOn($day);
 
         if ($customer->persona === 'prompt' && $day->isFriday() && $owed->isPositive()) {
             $recordPayment->run($customer, $owed, $day);

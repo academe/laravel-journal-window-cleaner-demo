@@ -21,11 +21,11 @@ it('seeds six months of balanced history', function () {
         ->and(Purchase::where('category', 'equipment')->count())->toBe(2);
 
     // Level C: the books balance by construction.
-    $assets = Books::debtorsLedger()->currentBalance('GBP')
-        ->add(Books::bankLedger()->currentBalance('GBP'));
-    $liabilitiesPlusIncomeLessExpenses = Books::vatLedger()->currentBalance('GBP')
-        ->add(Books::salesLedger()->currentBalance('GBP'))
-        ->subtract(Books::expensesLedger()->currentBalance('GBP'));
+    $assets = Books::debtorsLedger()->normalBalanceOn('GBP')
+        ->add(Books::bankLedger()->normalBalanceOn('GBP'));
+    $liabilitiesPlusIncomeLessExpenses = Books::vatLedger()->normalBalanceOn('GBP')
+        ->add(Books::salesLedger()->normalBalanceOn('GBP'))
+        ->subtract(Books::expensesLedger()->normalBalanceOn('GBP'));
     expect($assets->equals($liabilitiesPlusIncomeLessExpenses))->toBeTrue();
 
     // Every seeded quarter's VAT return has both sides.

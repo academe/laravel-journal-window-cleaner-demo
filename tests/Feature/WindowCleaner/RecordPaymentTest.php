@@ -15,7 +15,7 @@ it('credits the customer and debits the bank in one group', function () {
     $payment = app(RecordPayment::class)->run($this->customer, Money::GBP(1000));
 
     expect($this->customer->journal->currentBalance()->equals(Money::GBP(1000)))->toBeTrue()
-        ->and(Books::bankLedger()->currentBalance('GBP')->equals(Money::GBP(1000)))->toBeTrue()
+        ->and(Books::bankLedger()->normalBalanceOn('GBP')->equals(Money::GBP(1000)))->toBeTrue()
         ->and($payment->journalTransactions)->toHaveCount(2)
         ->and($payment->journalTransactions->first()->tags)
         ->toBe(['kind' => 'payment', 'channel' => 'online'])

@@ -78,8 +78,9 @@ class TourController
                     .'in Debtors (asset), and the company journals in Bank (asset), Sales (income), '
                     .'VAT owed (liability) and Expenses (expense). Because every posting is a '
                     .'balanced group, Debtors + Bank always equals VAT owed + Sales − Expenses — '
-                    .'the Books page computes each side with one Ledger::currentBalance() call per '
-                    .'ledger and shows the equation holding live. The VAT return page reads both '
+                    .'the Books page computes each side with one Ledger::normalBalanceOn() call per '
+                    .'ledger — signed from the ledger type\'s normal balance side, so assets read '
+                    .'positive when debited — and shows the equation holding live. The VAT return page reads both '
                     .'sides of the one VAT journal back apart: credit legs are output VAT on '
                     .'sales, debit legs are input VAT on purchases.',
                 'code' => <<<'PHP'
@@ -87,7 +88,7 @@ class TourController
 
                     $customer->initJournal(Books::currencyCode())->assignToLedger($debtors);
 
-                    Books::debtorsLedger()->currentBalance('GBP');  // one SQL aggregate
+                    Books::debtorsLedger()->normalBalanceOn('GBP');  // one SQL aggregate
                     PHP,
                 'file' => 'app/Demos/WindowCleaner/Actions/EnsureBooksExist.php',
                 'liveUrl' => '/window-cleaner/admin/books',

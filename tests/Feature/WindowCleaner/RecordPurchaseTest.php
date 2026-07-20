@@ -22,11 +22,11 @@ it('posts a purchase as one balanced three-leg group with the input VAT split ou
         ->and($legs->first()->getRawOriginal('reference_type'))->toBe('purchase');
 
     // Expenses is debit-normal: the net cost reads positive at ledger level.
-    expect(Books::expensesLedger()->currentBalance('GBP')->equals(Money::GBP(1995)))->toBeTrue()
+    expect(Books::expensesLedger()->normalBalanceOn('GBP')->equals(Money::GBP(1995)))->toBeTrue()
         // Bank fell by the gross amount actually paid.
-        ->and(Books::bankLedger()->currentBalance('GBP')->equals(Money::GBP(-2394)))->toBeTrue()
+        ->and(Books::bankLedger()->normalBalanceOn('GBP')->equals(Money::GBP(-2394)))->toBeTrue()
         // VAT owed (credit-normal) goes negative: HMRC owes us the input VAT.
-        ->and(Books::vatLedger()->currentBalance('GBP')->equals(Money::GBP(-399)))->toBeTrue();
+        ->and(Books::vatLedger()->normalBalanceOn('GBP')->equals(Money::GBP(-399)))->toBeTrue();
 });
 
 it('nets input VAT against output VAT in the one VAT journal', function () {
@@ -47,11 +47,11 @@ it('keeps the extended accounting equation balanced, even on awkward pennies', f
     app(ChargeVisit::class)->run($customer, $service, Money::GBP(1499));
     app(RecordPurchase::class)->run('Squeaky Wholesale', 'supplies', Money::GBP(2394));
 
-    $assets = Books::debtorsLedger()->currentBalance('GBP')
-        ->add(Books::bankLedger()->currentBalance('GBP'));
-    $liabilitiesPlusIncomeLessExpenses = Books::vatLedger()->currentBalance('GBP')
-        ->add(Books::salesLedger()->currentBalance('GBP'))
-        ->subtract(Books::expensesLedger()->currentBalance('GBP'));
+    $assets = Books::debtorsLedger()->normalBalanceOn('GBP')
+        ->add(Books::bankLedger()->normalBalanceOn('GBP'));
+    $liabilitiesPlusIncomeLessExpenses = Books::vatLedger()->normalBalanceOn('GBP')
+        ->add(Books::salesLedger()->normalBalanceOn('GBP'))
+        ->subtract(Books::expensesLedger()->normalBalanceOn('GBP'));
 
     expect($assets->equals($liabilitiesPlusIncomeLessExpenses))->toBeTrue();
 });

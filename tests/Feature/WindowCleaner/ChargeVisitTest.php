@@ -31,15 +31,15 @@ it('charges a visit as one balanced three-leg group with the VAT split out', fun
 it('keeps the accounting equation balanced, even on awkward pennies', function () {
     app(ChargeVisit::class)->run($this->customer, $this->service, Money::GBP(1499));
 
-    $assets = Books::debtorsLedger()->currentBalance('GBP')
-        ->add(Books::bankLedger()->currentBalance('GBP'));
-    $liabilitiesPlusIncome = Books::vatLedger()->currentBalance('GBP')
-        ->add(Books::salesLedger()->currentBalance('GBP'));
+    $assets = Books::debtorsLedger()->normalBalanceOn('GBP')
+        ->add(Books::bankLedger()->normalBalanceOn('GBP'));
+    $liabilitiesPlusIncome = Books::vatLedger()->normalBalanceOn('GBP')
+        ->add(Books::salesLedger()->normalBalanceOn('GBP'));
 
     expect($assets->equals($liabilitiesPlusIncome))->toBeTrue()
-        ->and(Books::debtorsLedger()->currentBalance('GBP')->equals(Money::GBP(1499)))->toBeTrue()
-        ->and(Books::salesLedger()->currentBalance('GBP')->equals(Money::GBP(1250)))->toBeTrue()
-        ->and(Books::vatLedger()->currentBalance('GBP')->equals(Money::GBP(249)))->toBeTrue();
+        ->and(Books::debtorsLedger()->normalBalanceOn('GBP')->equals(Money::GBP(1499)))->toBeTrue()
+        ->and(Books::salesLedger()->normalBalanceOn('GBP')->equals(Money::GBP(1250)))->toBeTrue()
+        ->and(Books::vatLedger()->normalBalanceOn('GBP')->equals(Money::GBP(249)))->toBeTrue();
 });
 
 it('records the visit with a historical post date when given one', function () {
